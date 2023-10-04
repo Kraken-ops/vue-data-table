@@ -14,7 +14,7 @@
               append-icon="mdi-magnify"
               @keyup.13="searchData"
             ></v-text-field>
-            <v-icon class="ma-4" @click="downloadCsv">mdi-download</v-icon>
+            <v-icon class="ma-4 pa-2" @click="downloadCsv">mdi-download</v-icon>
           </div>
         </v-card-title>
 
@@ -41,7 +41,7 @@
             </v-tooltip>
           </template>
         </v-data-table>
-        <v-btn color="primary" @click="exportCsv">Export to CSV</v-btn>
+        
       </v-card>
     </v-container>
   </div>
@@ -207,11 +207,12 @@ export default {
     },
     searchData() {
       // Filter the data based on searchText
+      // this.search = this.search.toLowerCase();
       if (this.search) {
         this.filteredUsers = this.users.filter(
           (user) =>
-            user.firstName.toLowerCase().includes(this.search) ||
-            user.lastName.toLowerCase().includes(this.search)
+            user.firstName.toLowerCase().includes(this.search.toLowerCase()) ||
+            user.lastName.toLowerCase().includes(this.search.toLowerCase())
         );
       } else {
         this.filteredUsers = this.users;
@@ -258,22 +259,24 @@ export default {
       console.log(data, "datas download");
       // const csv = this.convertToCsv(data);
       const csv = [
-        ["id,firstName,lastName,age"],
+        ["id,firstName,lastName,email,age,gender"],
         ...data.map((item) => [
           item.id,
           item.firstName,
           item.lastName,
+          item.email,
           item.age,
+          item.gender,
         ]),
       ]
         .map((e) => e.join(","))
         .join("\n");
       console.log(csv);
-      const blob = new Blob([csv], { type: "text/csv" });
+      const blob = new Blob([csv], { type: "text/xlsx" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.setAttribute("href", url);
-      link.setAttribute("download", "data.csv");
+      link.setAttribute("download", "data.xlsx");
       link.style.visibility = "hidden";
       document.body.appendChild(link);
       link.click();
